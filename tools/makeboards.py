@@ -322,6 +322,7 @@ MakeBoard("extelec_rc2040", "ExtremeElectronics", "RC2040", "0x2e8a", "0xee20", 
 MakeBoard("challenger_2040_lte", "iLabs", "Challenger 2040 LTE", "0x2e8a", "0x100b", 500, "CHALLENGER_2040_LTE_RP2040", 8, "boot2_w25q080_2_padded_checksum")
 MakeBoard("challenger_2040_lora", "iLabs", "Challenger 2040 LoRa", "0x2e8a", "0x1023", 250, "CHALLENGER_2040_LORA_RP2040", 8, "boot2_w25q080_2_padded_checksum")
 MakeBoard("challenger_2040_subghz", "iLabs", "Challenger 2040 SubGHz", "0x2e8a", "0x1032", 250, "CHALLENGER_2040_SUBGHZ_RP2040", 8, "boot2_w25q080_2_padded_checksum")
+MakeBoard("challenger_2040_wifi6", "iLabs", "Challenger 2040 WiFi6", "0x2e8a", "0x1100", 500, "CHALLENGER_2040_WIFI6_RP2040", 8, "boot2_w25q080_2_padded_checksum", ["NRF700X_ON_SPI", "REG_DEBUG_MODE_SUPPORT", "CONFIG_NRF700x_MAX_TX_PENDING_QLEN=128"])
 MakeBoard("challenger_2040_wifi", "iLabs", "Challenger 2040 WiFi", "0x2e8a", "0x1006", 250, "CHALLENGER_2040_WIFI_RP2040", 8, "boot2_w25q080_2_padded_checksum", ["WIFIESPAT2"])
 MakeBoard("challenger_2040_wifi_ble", "iLabs", "Challenger 2040 WiFi/BLE", "0x2e8a", "0x102C", 500, "CHALLENGER_2040_WIFI_BLE_RP2040", 8, "boot2_w25q080_2_padded_checksum", ["WIFIESPAT2"])
 MakeBoard("challenger_nb_2040_wifi", "iLabs", "Challenger NB 2040 WiFi", "0x2e8a", "0x100d", 500, "CHALLENGER_NB_2040_WIFI_RP2040", 8, "boot2_w25q080_2_padded_checksum", ["WIFIESPAT2"])

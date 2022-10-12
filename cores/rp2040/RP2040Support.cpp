@@ -1,8 +1,5 @@
 /*
-    CoreMutex for the Raspberry Pi Pico RP2040
-
-    Implements a deadlock-safe multicore mutex for sharing things like the
-    USB or UARTs.
+    RP2040 utility class
 
     Copyright (c) 2021 Earle F. Philhower, III <earlephilhower@yahoo.com>
 
@@ -21,21 +18,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#pragma once
+#include <Arduino.h>
+#include <hardware/structs/psm.h>
 
-#include "pico/mutex.h"
-#include "_freertos.h"
+extern "C" void boot_double_tap_check();
 
-class CoreMutex {
-public:
-    CoreMutex(mutex_t *mutex, bool debugEnable = true);
-    ~CoreMutex();
+// The following check will never actually execute, but it will cause the boot reset
+// checker to be linked in as part of the constructors.
 
-    operator bool() {
-        return _acquired;
+void RP2040::enableDoubleResetBootloader() {
+    if (psm_hw->done == 0) {
+        boot_double_tap_check();
     }
-
-private:
-    mutex_t *_mutex;
-    bool _acquired;
-};
+}

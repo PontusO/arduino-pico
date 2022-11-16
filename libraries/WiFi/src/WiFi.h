@@ -3,7 +3,11 @@
 #include "wl_definitions.h"
 #include "wl_types.h"
 
-#include "WiFiClass.h"
+#if !defined(WIFIESPAT2)
+#include "picoWiFiClass.h"
+#else
+#include "espatWiFiClass.h"
+#endif
 #include "WiFiClient.h"
 #include "WiFiServer.h"
 #include "WiFiClientSecure.h"

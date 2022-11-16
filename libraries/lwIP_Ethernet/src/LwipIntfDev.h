@@ -51,12 +51,17 @@
 #define DEFAULT_MTU 1500
 #endif
 
+#if defined(WIFIESPAT2)
+#define THE_FAKE_SS_PIN     -1
+#else
+#define THE_FAKE_SS_PIN     SS
+#endif
 extern "C" void cyw43_hal_generate_laa_mac(__unused int idx, uint8_t buf[6]);
 
 template<class RawDev>
 class LwipIntfDev: public LwipIntf, public RawDev {
 public:
-    LwipIntfDev(int8_t cs = SS, SPIClass& spi = SPI, int8_t intr = -1) :
+    LwipIntfDev(int8_t cs = THE_FAKE_SS_PIN, SPIClass& spi = SPI, int8_t intr = -1) :
         RawDev(cs, spi, intr), _mtu(DEFAULT_MTU), _intrPin(intr), _started(false), _default(false) {
         memset(&_netif, 0, sizeof(_netif));
     }

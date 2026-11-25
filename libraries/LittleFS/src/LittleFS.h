@@ -29,8 +29,10 @@
 #include <FS.h>
 #include <FSImpl.h>
 
-#define LFS_NAME_MAX 255
+#include "./lfs_local_config.h"
 #include "../lib/littlefs/lfs.h"
+
+#include "./wrap_lfs.h" // LFSMutex
 
 using namespace fs;
 
@@ -167,6 +169,7 @@ public:
     }
 
     bool begin() override {
+        LFSMutex m; // Ensure two cores don't call us at the same time
         if (_mounted) {
             return true;
         }
@@ -184,6 +187,7 @@ public:
     }
 
     void end() override {
+        LFSMutex m; // Ensure two cores don't call us at the same time
         if (!_mounted) {
             return;
         }
@@ -192,6 +196,7 @@ public:
     }
 
     bool format() override {
+        LFSMutex m; // Ensure two cores don't call us at the same time
         if (_size == 0) {
             DEBUGV("lfs size is zero");
             return false;

@@ -156,11 +156,11 @@ env.Append(
     ] + toolopts,
 
     CFLAGS=[
-        "-std=gnu17"
+        "-std=gnu23",
     ],
 
     CXXFLAGS=[
-        "-std=gnu++17",
+        "-std=gnu++23",
     ],
 
     CPPDEFINES=[
@@ -180,6 +180,20 @@ env.Append(
     LINKFLAGS=[
         "@%s" % os.path.join(FRAMEWORK_DIR, "lib", chip, "platform_wrap.txt"),
         "@%s" % os.path.join(FRAMEWORK_DIR, "lib", "core_wrap.txt"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_pbuf_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_tcp_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_udp_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_raw_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_timeouts_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_dns_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_dhcp_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_igmp_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_mld6_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_netif_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_ethernet_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_mdns_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "cores", "rp2040", "lwip-wrappers", "wrap_sntp_wraps.inc"),
+        "@%s" % os.path.join(FRAMEWORK_DIR, "libraries", "LittleFS", "src", "wrap_lfs_wraps.inc"),
         # no cross-reference table, heavily spams the output
         # "-Wl,--cref",
         "-Wl,--no-warn-rwx-segments",

@@ -33,15 +33,14 @@ void setup(void) {
       server.send(200, "text/html", serverIndex);
     });
     server.on(
-    "/update", HTTP_POST, []() {
+      "/update", HTTP_POST, []() {
       server.sendHeader("Connection", "close");
       server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
       rp2040.restart();
     },
-    []() {
+      []() {
       HTTPUpload& upload = server.upload();
       if (upload.status == UPLOAD_FILE_START) {
-        WiFiUDP::stopAll();
         Serial.printf("Update: %s\n", upload.filename.c_str());
         FSInfo i;
         LittleFS.begin();

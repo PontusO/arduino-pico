@@ -21,6 +21,7 @@
 */
 
 #include <Arduino.h>
+#include <wiring_private.h> // __shim
 #include "ADCInput.h"
 #include <hardware/adc.h>
 #include <debug_internal.h>
@@ -78,8 +79,12 @@ bool ADCInput::setPins(pin_size_t pin0, pin_size_t pin1, pin_size_t pin2, pin_si
 }
 
 bool ADCInput::setFrequency(int newFreq) {
-    _freq = newFreq;
     int scaledFreq = newFreq * __builtin_popcount(_pinMask); // Want to sample all channels at given frequency
+    // The integer part of the ADC divider is only 16 bits, a slower rate would wrap around to a faster one
+    if ((scaledFreq <= 0) || (48000000.0f / scaledFreq - 1.0f >= 65536.0f)) {
+        return false;
+    }
+    _freq = newFreq;
     adc_set_clkdiv(48000000.0f / scaledFreq - 1.0f);
     return true;
 }
@@ -87,7 +92,7 @@ bool ADCInput::setFrequency(int newFreq) {
 void ADCInput::onReceive(void(*fn)(void)) {
     _cb = fn;
     if (_running) {
-        _arb->setCallback(_cb);
+        _arb->setCallback(__shim, (void *)_cb);
     }
 }
 
@@ -141,12 +146,14 @@ bool ADCInput::begin() {
     setFrequency(_freq);
 
     _arb = new AudioBufferManager(_buffers, _bufferWords, 0, INPUT, DMA_SIZE_16);
-    if (!_arb->begin(DREQ_ADC, (volatile void*)&adc_hw->fifo)) {
+    if (!_arb->begin(DREQ_ADC, (volatile void *)&adc_hw->fifo)) {
         delete _arb;
         _arb = nullptr;
         return false;
     }
-    _arb->setCallback(_cb);
+    if (_cb) {
+        _arb->setCallback(__shim, (void *)_cb);
+    }
 
     adc_fifo_drain();
 

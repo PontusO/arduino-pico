@@ -28,7 +28,6 @@
 #include <lwip/raw.h>
 #include <lwip/timeouts.h>
 #include <pico/cyw43_arch.h>
-#include <pico/mutex.h>
 #include <sys/lock.h>
 #include "_xoshiro.h"
 #include "lwip_wrap.h"
@@ -74,13 +73,11 @@ extern "C" {
         if (!_lwip_rng) {
             recursive_mutex_init(&__lwipMutex);
             _lwip_rng = new XoshiroCpp::Xoshiro256PlusPlus(micros());
-            {
-                LWIPMutex m;
-                __real_lwip_init();
-            }
 #ifdef __FREERTOS
             __startLWIPThread();
 #endif
+            LWIPMutex m;
+            __real_lwip_init();
         }
     }
 

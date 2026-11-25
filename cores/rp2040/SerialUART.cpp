@@ -301,7 +301,9 @@ void SerialUART::begin(unsigned long baud, uint16_t config) {
 }
 
 void SerialUART::end() {
-    if (!_running) {
+    // Same lock as the I/O calls so teardown waits for any in-progress operation
+    CoreMutex m(&_mutex);
+    if (!_running || !m) {
         return;
     }
     _running = false;
@@ -313,14 +315,13 @@ void SerialUART::end() {
         }
     }
 
-    // Paranoia - ensure nobody else is using anything here at the same time
-    mutex_enter_blocking(&_mutex);
+    // Wait out an IRQ handler running on the other core
+    noInterrupts();
     mutex_enter_blocking(&_fifoMutex);
     uart_deinit(_uart);
     delete _queue;
-    // Reset the mutexes once all is off/cleaned up
     mutex_exit(&_fifoMutex);
-    mutex_exit(&_mutex);
+    interrupts();
 
     // Restore pin functions
     if (_tx != UART_PIN_NOT_DEFINED) {
@@ -394,7 +395,8 @@ int SerialUART::read() {
 }
 
 bool SerialUART::overflow() {
-    if (!_running) {
+    CoreMutex m(&_mutex);
+    if (!_running || !m) {
         return false;
     }
 
@@ -404,10 +406,12 @@ bool SerialUART::overflow() {
         _pumpFIFO();
     }
 
+    noInterrupts();
     mutex_enter_blocking(&_fifoMutex);
     bool ovf = _overflow;
     _overflow = false;
     mutex_exit(&_fifoMutex);
+    interrupts();
 
     return ovf;
 }
@@ -481,7 +485,8 @@ SerialUART::operator bool() {
 }
 
 bool SerialUART::getBreakReceived() {
-    if (!_running) {
+    CoreMutex m(&_mutex);
+    if (!_running || !m) {
         return false;
     }
 
@@ -491,10 +496,12 @@ bool SerialUART::getBreakReceived() {
         _pumpFIFO();
     }
 
+    noInterrupts();
     mutex_enter_blocking(&_fifoMutex);
     bool break_received = _break;
     _break = false;
     mutex_exit(&_fifoMutex);
+    interrupts();
 
     return break_received;
 }
